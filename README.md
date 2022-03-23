@@ -58,8 +58,9 @@ The correct one is showed beside it for the reference.
 ```bash
 python demo.py --image ./data/street.jpg --model yolov3 --weights ./weights/yolov3.weights --img_size 418
 ```
-The confidence threshold and nms IoU threshold can be changed by `--conf_threshold`
-and `--nms_threshold` respectively.
+The resultsis saved as `demo.png`.
+Note that the confidence threshold and NMS IoU threshold can be changed by
+flags `--conf_threshold` and `--nms_threshold` respectively.
 
 ## Train From Scratch
 
@@ -82,8 +83,9 @@ The default training arguments are same as official ones for `yolov3`.
     --batch_size 64 \
     --accumulation 1
   ```
-  The inter-process communication uses port `39846` by default. It can be
-  changed by editing `train.py`.
+  The inter-process communication uses port `39846` by default, which can be
+  changed by editing `train.py`. In my experiments, full 500k iterations takes
+  about 63 hours on a 4xRTX3090 server.
 
 ### Results on MS COCO 2014 (darknet splits)
 
