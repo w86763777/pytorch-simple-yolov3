@@ -1,0 +1,15 @@
+logs
+
+__pycache__
+.python-version
+
+weights/*
+!weights/download_weights.sh
+
+data/*
+!data/download_coco.sh
+!data/generate_annotations.py
+!data/arial.ttf
+!data/street.jpg
+
+*.png
