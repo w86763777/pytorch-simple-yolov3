@@ -1,10 +1,8 @@
 import argparse
 
 import torch
-from pycocotools.coco import COCO
 from PIL import Image
 
-from yolov3.dataset import DetectionDataset
 from yolov3.transforms import preprocess
 from yolov3.models import YOLOs
 from yolov3.models.utils import parse_weights
@@ -31,20 +29,40 @@ parser.add_argument('--conf_threshold', type=float, default=0.5,
                     help='confidence threshold')
 parser.add_argument('--nms_threshold', type=float, default=0.45,
                     help='nms threshold')
-# for class label
-parser.add_argument('--val_ann_file', type=str,
-                    default='./data/coco/annotations/instances_5k.json',
-                    help='path to val annotation file')
 args = parser.parse_args()
 
 
+label2name = [
+    'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train',
+    'truck', 'boat', 'traffic light', 'fire hydrant', 'stop sign',
+    'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow',
+    'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag',
+    'tie', 'suitcase', 'frisbee', 'skis', 'snowboard', 'sports ball', 'kite',
+    'baseball bat', 'baseball glove', 'skateboard', 'surfboard',
+    'tennis racket', 'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon',
+    'bowl', 'banana', 'apple', 'sandwich', 'orange', 'broccoli', 'carrot',
+    'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch', 'potted plant',
+    'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote',
+    'keyboard', 'cell phone', 'microwave', 'oven', 'toaster', 'sink',
+    'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear',
+    'hair drier', 'toothbrush']
+
+label2color = torch.randint(
+    0, 256, size=(len(label2name), 3),
+    generator=torch.Generator().manual_seed(1))
+
+
 def main():
-    # the dataset is only used for getting class names and colors
-    dataset = DetectionDataset(
-        COCO(args.val_ann_file),
-        img_root=None,
-        img_size=None,
-        transforms=None)
+    # The class names and colors can be obtained from dataset.
+    # from pycocotools.coco import COCO
+    # from yolov3.dataset import DetectionDataset
+    # dataset = DetectionDataset(
+    #     COCO("./data/coco/annotations/instances_5k.json"),
+    #     img_root=None,
+    #     img_size=None,
+    #     transforms=None)
+    # print(dataset.label2name)
+    # print(dataset.label2color)
 
     img = Image.open(args.image).convert('RGB')
     orig_size = torch.tensor([img.size[1], img.size[0]]).long()
@@ -70,8 +88,8 @@ def main():
         bboxes, scores, labels = torch.split(bboxes, [4, 1, 1], dim=1)
         bboxes = preprocess.revert(bboxes, orig_size, args.img_size)
         for bbox, score, label in zip(bboxes, scores, labels):
-            name = dataset.label2name[int(label)]
-            color = dataset.label2color[int(label)]
+            name = label2name[int(label)]
+            color = label2color[int(label)]
             draw_bbox(img, bbox, name, color)
             draw_text(img, bbox, name, color)
             print('+ Label: %s, Conf: %.5f' % (name, score))
