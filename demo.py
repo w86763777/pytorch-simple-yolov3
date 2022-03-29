@@ -61,8 +61,8 @@ def main():
     #     img_root=None,
     #     img_size=None,
     #     transforms=None)
-    # print(dataset.label2name)
-    # print(dataset.label2color)
+    # label2name = dataset.label2name
+    # label2color = dataset.label2color
 
     img = Image.open(args.image).convert('RGB')
     orig_size = torch.tensor([img.size[1], img.size[0]]).long()
