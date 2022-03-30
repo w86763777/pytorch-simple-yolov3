@@ -16,7 +16,7 @@ parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('--image', type=str, required=True)
 # yolo
-parser.add_argument('--model', default='yolo', choices=YOLOs.keys(),
+parser.add_argument('--model', default='yolov3', choices=YOLOs.keys(),
                     help='model name')
 parser.add_argument('--weights', type=str, required=True,
                     help='path to weights file')
